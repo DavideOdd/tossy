@@ -2,7 +2,7 @@
 
 Le monetine dei giochi natalizi, ma digitali. Si crea una stanza, gli amici entrano da un link WhatsApp, e le monete si **lanciano con un gesto** verso l'avatar di chi vince. A fine partita Tossy calcola chi deve pagare chi, con il minor numero di pagamenti, e genera i link PayPal — **mai nessun addebito automatico**.
 
-> Stato: **Fase 0 — documentazione e architettura** · Repo privata · Vedi [ROADMAP](docs/ROADMAP.md)
+> Stato: **Fase 1 completata — prototipo giocabile locale su `/table`** · Repo privata · Vedi [ROADMAP](docs/ROADMAP.md)
 
 ## In una frase
 Un tavolo di gioco condiviso in tempo reale dove il passaggio della moneta è l'esperienza (drag, lancio, suono, saldo animato) e il denaro vero si muove solo dopo approvazione esplicita.
@@ -13,6 +13,12 @@ Un tavolo di gioco condiviso in tempo reale dove il passaggio della moneta è l'
 3. **Gioca**: trascina una moneta sull'avatar di un amico.
 4. **Chiudi**: l'organizzatore blocca il tavolo, Tossy propone i pagamenti ottimizzati.
 5. **Approva & paga**: ognuno approva i propri pagamenti, poi apre il link PayPal.Me precompilato.
+
+## Sviluppo
+```bash
+pnpm install && pnpm dev   # http://localhost:3000
+pnpm check                  # typecheck + lint + test
+```
 
 ## Stack
 Next.js (App Router) · TypeScript · Tailwind CSS · Framer Motion · Supabase (Postgres + Realtime + RLS + Auth anonima) · Vercel · PWA.
