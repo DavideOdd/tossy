@@ -20,6 +20,8 @@ const uuid = () => globalThis.crypto.randomUUID();
 export class LocalRepo implements RoomRepo {
   readonly kind = "local" as const;
   private listeners = new Map<string, Set<(s: Snapshot | null) => void>>();
+  private lastRaw = new Map<string, string | null>();
+  private timer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private store: KV,
@@ -54,6 +56,7 @@ export class LocalRepo implements RoomRepo {
     };
   }
   private emit(code: string) {
+    this.lastRaw.set(code, this.store.getItem(`tossy:room:${code}`));
     const s = this.snap(code);
     this.listeners.get(code)?.forEach((cb) => cb(s));
   }
@@ -109,8 +112,24 @@ export class LocalRepo implements RoomRepo {
     const set = this.listeners.get(c) ?? new Set();
     set.add(cb);
     this.listeners.set(c, set);
+    this.lastRaw.set(c, this.store.getItem(`tossy:room:${c}`));
     cb(this.snap(c));
-    return () => void set.delete(cb);
+    // Safety net next to BroadcastChannel/storage events: re-read shared storage once a second.
+    this.timer ??= setInterval(() => this.poll(), 1000);
+    return () => {
+      set.delete(cb);
+      if ([...this.listeners.values()].every((x) => x.size === 0) && this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+    };
+  }
+
+  /** Emit for every watched room whose stored data changed since we last looked. */
+  poll() {
+    for (const [code, set] of this.listeners) {
+      if (set.size && this.store.getItem(`tossy:room:${code}`) !== this.lastRaw.get(code)) this.emit(code);
+    }
   }
 
   async startGame(code: string) {
@@ -160,5 +179,9 @@ export function browserLocalRepo(): LocalRepo {
   const bus: Bus | undefined = ch
     ? { post: (c) => ch.postMessage(c), onMessage: (cb) => (ch.onmessage = (e) => cb(String(e.data))) }
     : undefined;
-  return new LocalRepo(localStorage, sessionStorage, bus);
+  const repo = new LocalRepo(localStorage, sessionStorage, bus);
+  window.addEventListener("storage", (e) => {
+    if (e.key?.startsWith("tossy:room:")) repo.poll();
+  });
+  return repo;
 }

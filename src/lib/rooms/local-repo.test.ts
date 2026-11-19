@@ -73,6 +73,17 @@ describe("LocalRepo", () => {
     await expect(late.joinRoom(code, prof("Zed"))).rejects.toThrow(/closed/);
   });
 
+  it("picks up changes from other tabs via poll() even without a bus", async () => {
+    const counts: number[] = [];
+    const off = anna.subscribe(code, (s) => counts.push(s?.members.length ?? -1));
+    const carla = new LocalRepo(store, mem());
+    await carla.joinRoom(code, prof("Carla")); // anna has no bus: not notified yet
+    expect(counts.at(-1)).toBe(2);
+    anna.poll();
+    off();
+    expect(counts.at(-1)).toBe(3);
+  });
+
   it("notifies subscribers and validates PayPal.Me", async () => {
     const seen: number[] = [];
     const off = anna.subscribe(code, (s) => seen.push(s?.members.length ?? -1));
