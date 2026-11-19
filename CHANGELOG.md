@@ -2,6 +2,11 @@
 Formato [Keep a Changelog](https://keepachangelog.com/it/1.1.0/), versioning [SemVer](https://semver.org/lang/it/).
 
 ## [Unreleased]
+### Added (Fase 4)
+- Posti: l'organizzatore ordina i giocatori in senso orario ("Disponi il tavolo", in lobby e a partita in corso); ognuno vede sé stesso in basso e gli altri nell'ordine reale. Migrazione `0003` (`members.seat`, `set_seats`).
+- Pagamenti di fine partita: `close_room` pubblica i pagamenti (il server verifica che azzerino i saldi), il pagatore approva, solo allora compare il link PayPal.Me con importo, chi riceve conferma; a conferma totale la stanza è `completed`. Chi deve ricevere può aggiungere il PayPal.Me dal foglio pagamenti.
+### Fixed
+- `parsePayPalMe` accetta anche `paypal.me/nome` senza schema.
 ### Added (Fase 3b)
 - Stanze condivise tra telefoni diversi: progetto Supabase `tossy` (eu-central-1, piano Free) con login anonimo; URL e chiave pubblica nel workflow Pages. Migrazione `0002` per chiudere le RPC ad `anon`. Provato dal vivo con 2 client (creazione, ingresso, trasferimento idempotente, chiusura riservata all'organizzatore).
 

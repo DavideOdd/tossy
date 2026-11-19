@@ -28,3 +28,9 @@
 
 ## Implementazione
 `lib/paypal.ts`: `buildPayPalMeUrl(handle, cents, currency)` + test; nessuna chiamata di rete lato server. Link aperto in nuova scheda con `rel="noopener noreferrer"`.
+
+## Flusso implementato (Fase 4)
+1. L'organizzatore chiude: `close_room(room, payments)`; il server controlla che i pagamenti azzerino i saldi.
+2. Il pagatore tocca *Approvo il pagamento* (`approve_payment`).
+3. Solo dopo compare *Apri PayPal.Me* con importo precompilato (`paypal.me/<handle>/<importo>EUR`); il pagamento lo conferma l'utente su PayPal. Senza PayPal.Me del destinatario: pagamento di persona.
+4. Il destinatario tocca *Ho ricevuto* (`confirm_received`); a conferma di tutti la stanza passa a `completed`.

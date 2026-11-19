@@ -5,6 +5,7 @@ describe("paypal", () => {
   it("parses handles and urls", () => {
     expect(parsePayPalMe("@mario")).toBe("mario");
     expect(parsePayPalMe("https://www.paypal.me/Mario99/25")).toBe("Mario99");
+    expect(parsePayPalMe("paypal.me/annarossi")).toBe("annarossi");
     expect(parsePayPalMe("not valid!")).toBeNull();
     expect(parsePayPalMe("")).toBeNull();
   });

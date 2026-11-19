@@ -2,7 +2,7 @@ const HANDLE = /^[A-Za-z0-9]{1,20}$/;
 
 /** Accepts "handle", "@handle" or a full paypal.me URL; returns the clean handle or null. */
 export function parsePayPalMe(input: string): string | null {
-  const raw = input.trim().replace(/^https?:\/\/(www\.)?paypal\.me\//i, "").replace(/^@/, "");
+  const raw = input.trim().replace(/^(https?:\/\/)?(www\.)?paypal\.me\//i, "").replace(/^@/, "");
   const handle = raw.split(/[/?#]/)[0];
   return HANDLE.test(handle) ? handle : null;
 }
