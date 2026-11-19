@@ -1,5 +1,5 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Avatar } from "@/components/avatar/Avatar";
 import { Coin } from "@/components/coin/Coin";
@@ -15,6 +15,11 @@ import { useCoinThrow } from "./useCoinThrow";
 
 export type Entry = { id: string; from: string; to: string; cents: number };
 type Pop = { id: string; to: string; n: number };
+type Flight = { id: string; cents: number; x0: number; y0: number; x1: number; y1: number };
+const center = (el: HTMLElement | null) => {
+  const r = el?.getBoundingClientRect();
+  return r ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null;
+};
 
 export function TableView({
   roomName,
@@ -50,6 +55,8 @@ export function TableView({
 }) {
   const [amount, setAmount] = useState(10);
   const [pops, setPops] = useState<Pop[]>([]);
+  const reduce = useReducedMotion();
+  const [flights, setFlights] = useState<Flight[]>([]);
   const [sheet, setSheet] = useState<null | "history" | "settle">(null);
   const [dismissed, setDismissed] = useState(false);
   const [mute, setMute] = useState(false);
@@ -74,9 +81,20 @@ export function TableView({
     if (!fresh.length) return;
     fresh.forEach((e) => seen.current!.add(e.id));
     setPops((p) => [...p, ...fresh.map((e) => ({ id: e.id, to: e.to, n: e.cents }))]);
+    // Coins thrown by other players fly too (mine already fly via the drag gesture).
+    const fl = fresh.flatMap((e): Flight[] => {
+      if (e.from === meId) return [];
+      const a = center(seatRefs.current[e.from] ?? null);
+      const b = center(e.to === meId ? trayRef.current : (seatRefs.current[e.to] ?? null));
+      return a && b ? [{ id: e.id, cents: e.cents, x0: a.x, y0: a.y, x1: b.x, y1: b.y }] : [];
+    });
+    if (fl.length && !reduce) {
+      setFlights((f) => [...f, ...fl]);
+      setTimeout(() => setFlights((f) => f.filter((q) => !fl.some((z) => z.id === q.id))), 900);
+    }
     const ids = new Set(fresh.map((e) => e.id));
     setTimeout(() => setPops((p) => p.filter((q) => !ids.has(q.id))), 900);
-  }, [ledger]);
+  }, [ledger, meId, reduce]);
 
   const { x, y, scale, rotX, rotY, hoverId, flying, handlers } = useCoinThrow({
     seatRefs,
@@ -208,6 +226,22 @@ export function TableView({
           )}
         </div>
       </footer>
+
+      {flights.map((f) => (
+        <motion.div
+          key={f.id}
+          aria-hidden
+          className="pointer-events-none fixed left-0 top-0 z-40"
+          style={{ marginLeft: -22, marginTop: -22, filter: "drop-shadow(0 8px 6px rgba(0,0,0,.45))" }}
+          initial={{ x: f.x0, y: f.y0, scale: 0.9, opacity: 1 }}
+          animate={{ x: f.x1, y: [f.y0, Math.min(f.y0, f.y1) - 70, f.y1], scale: [0.9, 1.5, 0.9], opacity: [1, 1, 0.9] }}
+          transition={{ duration: 0.7, ease: "easeInOut" }}
+        >
+          <motion.div animate={{ rotateY: 720 }} transition={{ duration: 0.7, ease: "linear" }}>
+            <Coin cents={f.cents} size={44} />
+          </motion.div>
+        </motion.div>
+      ))}
 
       <AnimatePresence>
         {err && (
