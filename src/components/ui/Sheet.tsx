@@ -28,7 +28,7 @@ export function Sheet({
             key="sheet"
             role="dialog"
             aria-label={title}
-            className="fixed inset-x-0 bottom-0 z-50 mx-auto max-h-[82dvh] max-w-md overflow-y-auto rounded-t-[28px] border-t border-white/10 bg-walnut-900 p-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[0_-20px_60px_rgba(0,0,0,.6)]"
+            className="fixed inset-x-0 bottom-0 z-50 mx-auto max-h-[82dvh] max-w-md overflow-y-auto rounded-t-[28px] border-t border-white/10 bg-[#0e2720] p-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[0_-20px_60px_rgba(0,0,0,.5)]"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}

@@ -26,8 +26,8 @@ export function Lobby({ snap }: { snap: Snapshot }) {
         <p className="text-xs text-cream-50/60">Codice stanza</p>
         <p className="gold-text font-display text-6xl font-semibold tracking-[0.18em]">{snap.code}</p>
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer" className="grid min-h-12 place-items-center rounded-full bg-[#1f9d55] font-bold ring-1 ring-white/30 active:scale-95">
-            Invita su WhatsApp
+          <a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer" className="grid min-h-12 place-items-center rounded-full bg-white/[.06] px-3 text-sm font-semibold ring-1 ring-white/10 active:scale-95">
+            Invia su WhatsApp
           </a>
           <button
             className="min-h-12 rounded-full bg-felt-700 font-bold ring-1 ring-white/10 active:scale-95"

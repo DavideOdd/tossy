@@ -84,7 +84,7 @@ export function SettleSheet({
                   )
                 )}
                 {closed && p.to === meId && p.approved && !p.received && (
-                  <button className={`${btn} mt-3 w-full bg-[#1f9d55]`} onClick={() => { jingle(); void onReceived(p.id); }}>Ho ricevuto {fmtMoney(p.cents)}</button>
+                  <button className={`${btn} mt-3 w-full bg-cream-50 text-felt-900`} onClick={() => { jingle(); void onReceived(p.id); }}>Ho ricevuto {fmtMoney(p.cents)}</button>
                 )}
                 {closed && p.to === meId && !p.approved && <p className="mt-2 text-xs text-cream-50/60">Aspetta che {byId[p.from].name} approvi.</p>}
               </li>
