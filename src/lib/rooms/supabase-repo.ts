@@ -14,6 +14,11 @@ export class SupabaseRepo implements RoomRepo {
   private sb: SupabaseClient;
   private ready: Promise<string>;
   private roomIds = new Map<string, string>();
+  private pokes = new Map<string, Set<() => void>>();
+
+  private poke(code: string) {
+    this.pokes.get(normalizeCode(code))?.forEach((f) => f());
+  }
 
   constructor(url: string, anonKey: string) {
     this.sb = createClient(url, anonKey, { auth: { persistSession: true, autoRefreshToken: true } });
@@ -42,6 +47,7 @@ export class SupabaseRepo implements RoomRepo {
 
   async joinRoom(code: string, me: Profile): Promise<void> {
     await this.rpc("join_room", { p_code: normalizeCode(code), p_nickname: me.nickname, p_avatar: me.avatar });
+    this.poke(code);
   }
 
   async preview(code: string): Promise<Preview | null> {
@@ -52,7 +58,11 @@ export class SupabaseRepo implements RoomRepo {
   private async fetchSnapshot(code: string): Promise<Snapshot | null> {
     const uid = await this.ready;
     const { data: room } = await this.sb.from("rooms").select("id,name,status").eq("code", code).maybeSingle();
-    if (!room) return null;
+    if (!room) {
+      // Not a member yet (RLS hides the room): show the join gate if the invite code exists.
+      const pv = await this.preview(code);
+      return pv ? { code, name: pv.name, status: pv.status, members: [], transfers: [], meId: null } : null;
+    }
     this.roomIds.set(code, room.id);
     const [m, t] = await Promise.all([
       this.sb.from("members").select("id,user_id,nickname,avatar,paypal_me,is_owner").eq("room_id", room.id).order("joined_at"),
@@ -74,26 +84,34 @@ export class SupabaseRepo implements RoomRepo {
     let alive = true;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let channel: ReturnType<SupabaseClient["channel"]> | undefined;
-    const refresh = () => {
-      clearTimeout(timer);
-      timer = setTimeout(async () => alive && cb(await this.fetchSnapshot(c).catch(() => null)), 30);
-    };
-    (async () => {
-      const first = await this.fetchSnapshot(c).catch(() => null);
-      if (!alive) return;
-      cb(first);
+    let refresh: () => void = () => {};
+    const ensureChannel = (snap: Snapshot | null) => {
       const id = this.roomIds.get(c);
-      if (!id) return;
+      if (channel || !id || !snap?.meId) return;
       channel = this.sb
         .channel(`room:${c}`)
         .on("postgres_changes", { event: "*", schema: "public", table: "rooms", filter: `id=eq.${id}` }, refresh)
         .on("postgres_changes", { event: "*", schema: "public", table: "members", filter: `room_id=eq.${id}` }, refresh)
         .on("postgres_changes", { event: "*", schema: "public", table: "transfers", filter: `room_id=eq.${id}` }, refresh)
         .subscribe();
-    })();
+    };
+    const run = async () => {
+      const snap = await this.fetchSnapshot(c).catch(() => null);
+      if (!alive) return;
+      ensureChannel(snap);
+      cb(snap);
+    };
+    refresh = () => {
+      clearTimeout(timer);
+      timer = setTimeout(run, 30);
+    };
+    if (!this.pokes.has(c)) this.pokes.set(c, new Set());
+    this.pokes.get(c)!.add(refresh);
+    void run();
     return () => {
       alive = false;
       clearTimeout(timer);
+      this.pokes.get(c)?.delete(refresh);
       if (channel) void this.sb.removeChannel(channel);
     };
   }
