@@ -5,7 +5,7 @@ import { Avatar } from "@/components/avatar/Avatar";
 import { Coin } from "@/components/coin/Coin";
 import { Sheet } from "@/components/ui/Sheet";
 import { DENOMS, fmtCoin } from "@/lib/money";
-import type { RoomStatus } from "@/lib/rooms/types";
+import type { RoomStatus, SettlePayment } from "@/lib/rooms/types";
 import { balancesFromLedger } from "@/lib/settlement";
 import { isMuted, setMuted, unlockAudio } from "@/lib/sound";
 import { BalanceCounter } from "./BalanceCounter";
@@ -24,8 +24,13 @@ export function TableView({
   ledger,
   status = "playing",
   canClose = false,
+  payments = [],
   onThrow,
   onClose,
+  onApprove,
+  onReceived,
+  onSetPaypal,
+  onArrange,
 }: {
   roomName: string;
   code: string;
@@ -35,7 +40,13 @@ export function TableView({
   status?: RoomStatus;
   canClose?: boolean;
   onThrow: (toId: string, cents: number) => void | Promise<void>;
+  payments?: SettlePayment[];
   onClose?: () => void | Promise<void>;
+  onApprove?: (paymentId: string) => void | Promise<void>;
+  onReceived?: (paymentId: string) => void | Promise<void>;
+  onSetPaypal?: (handle: string) => void | Promise<void>;
+  /** Owner only: opens the seat-order editor. */
+  onArrange?: () => void;
 }) {
   const [amount, setAmount] = useState(10);
   const [pops, setPops] = useState<Pop[]>([]);
@@ -102,6 +113,11 @@ export function TableView({
           >
             {mute ? "🔇" : "🔔"}
           </button>
+          {onArrange && playing && (
+            <button onClick={onArrange} className="min-h-11 rounded-full bg-felt-900/70 px-4 text-sm font-semibold ring-1 ring-gold-500/50">
+              Posti
+            </button>
+          )}
           <button onClick={() => setSheet("history")} className="min-h-11 rounded-full bg-felt-900/70 px-4 text-sm font-semibold ring-1 ring-gold-500/50">
             Storico
           </button>
@@ -223,11 +239,15 @@ export function TableView({
         balances={balances}
         players={players}
         meId={meId}
-        closing={status === "closing"}
+        status={status}
         canClose={canClose && playing}
+        payments={payments}
         onConfirmClose={async () => {
           await onClose?.();
         }}
+        onApprove={(id) => onApprove?.(id)}
+        onReceived={(id) => onReceived?.(id)}
+        onSetPaypal={(h) => onSetPaypal?.(h)}
       />
     </main>
   );

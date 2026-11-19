@@ -1,3 +1,4 @@
+import { balancesFromLedger, settle } from "@/lib/settlement";
 import { beforeEach, describe, expect, it } from "vitest";
 import { LocalRepo, type KV } from "./local-repo";
 import { generateCode, isValidCode, normalizeCode } from "./code";
@@ -64,13 +65,40 @@ describe("LocalRepo", () => {
     expect(snap(bruno).transfers[0]).toMatchObject({ cents: 50, to });
   });
 
+  it("only the owner reorders seats, every member exactly once", async () => {
+    const ids = snap(anna).members.map((m) => m.id);
+    const rev = [...ids].reverse();
+    await expect(bruno.setSeats(code, rev)).rejects.toThrow(/not allowed/);
+    await expect(anna.setSeats(code, ids.slice(1))).rejects.toThrow(/every member/);
+    await anna.setSeats(code, rev);
+    expect(snap(bruno).members.map((m) => m.id)).toEqual(rev);
+  });
+
   it("closing freezes the room", async () => {
     await anna.startGame(code);
-    await anna.closeRoom(code);
     const to = snap(anna).members[1].id;
+    await anna.transfer(code, to, 50, tx());
+    await expect(anna.closeRoom(code, [])).rejects.toThrow(/do not settle/);
+    await anna.closeRoom(code, settle(balancesFromLedger(snap(anna).members.map((m) => m.id), snap(anna).transfers)));
     await expect(anna.transfer(code, to, 5, tx())).rejects.toThrow(/not playing/);
     const late = new LocalRepo(store, mem());
     await expect(late.joinRoom(code, prof("Zed"))).rejects.toThrow(/closed/);
+  });
+
+  it("settlement: payer approves, then receiver confirms, then completed", async () => {
+    await anna.startGame(code);
+    await anna.transfer(code, snap(anna).members[1].id, 50, tx());
+    const sn = snap(anna);
+    await anna.closeRoom(code, settle(balancesFromLedger(sn.members.map((m) => m.id), sn.transfers)));
+    const [p] = snap(anna).payments;
+    expect(p).toMatchObject({ cents: 50, approved: false });
+    await expect(bruno.confirmReceived(code, p.id)).rejects.toThrow(/not approved|not allowed/);
+    await expect(bruno.approvePayment(code, p.id)).rejects.toThrow(/not allowed/);
+    await anna.approvePayment(code, p.id);
+    await anna.confirmReceived(code, p.id).catch(() => {}); // payer is not the receiver
+    expect(snap(anna).payments[0].received).toBe(false);
+    await bruno.confirmReceived(code, p.id);
+    expect(snap(anna).status).toBe("completed");
   });
 
   it("picks up changes from other tabs via poll() even without a bus", async () => {

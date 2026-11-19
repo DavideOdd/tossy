@@ -1,6 +1,6 @@
 import type { AvatarCfg } from "@/components/avatar/Avatar";
 
-export type Player = { id: string; name: string; cfg: AvatarCfg };
+export type Player = { id: string; name: string; cfg: AvatarCfg; paypalMe?: string | null };
 
 export const ME = "me";
 

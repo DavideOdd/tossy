@@ -24,7 +24,9 @@ beforeAll(async () => {
   await db.exec(`create schema auth;
     create function auth.uid() returns uuid language sql stable as
     $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;`);
-  await db.exec(readFileSync("supabase/migrations/0001_rooms_ledger.sql", "utf8"));
+  for (const f of ["0001_rooms_ledger", "0002_lock_rpc_surface", "0003_seats_settlement"]) {
+    await db.exec(readFileSync(`supabase/migrations/${f}.sql`, "utf8"));
+  }
 
   await as(A);
   const r = await db.query<{ code: string; member_id: string }>(`select * from create_room('Vigilia','Anna','{"hat":"santa"}')`);
@@ -59,6 +61,25 @@ describe("rooms", () => {
   });
 });
 
+describe("seats", () => {
+  const seats = async () =>
+    (await db.query<{ id: string }>(`select id from members where room_id='${room}' order by seat`)).rows.map((r) => r.id);
+
+  it("assigns seats in join order", async () => {
+    expect(await seats()).toEqual([mA, mB, mC]);
+  });
+
+  it("only the owner reorders, and the order must list every member once", async () => {
+    await as(B);
+    await fails(db.query(`select set_seats('${room}', array['${mC}','${mB}','${mA}']::uuid[])`), /not allowed/);
+    await as(A);
+    await fails(db.query(`select set_seats('${room}', array['${mC}','${mB}']::uuid[])`), /every member/);
+    await fails(db.query(`select set_seats('${room}', array['${mC}','${mC}','${mA}']::uuid[])`), /every member/);
+    await db.query(`select set_seats('${room}', array['${mC}','${mA}','${mB}']::uuid[])`);
+    expect(await seats()).toEqual([mC, mA, mB]);
+  });
+});
+
 describe("ledger", () => {
   it("transfers, is idempotent on client_tx_id, and balances sum to zero", async () => {
     await as(B);
@@ -89,9 +110,12 @@ describe("ledger", () => {
 
   it("closing freezes the ledger and only the owner can close", async () => {
     await as(B);
-    await fails(db.query(`select close_room('${room}')`), /not allowed/);
+    const ok = JSON.stringify([{ from: mB, to: mA, cents: 200 }, { from: mB, to: mC, cents: 50 }]);
+    await fails(db.query(`select close_room('${room}', '${ok}'::jsonb)`), /not allowed/);
     await as(A);
-    await db.query(`select close_room('${room}')`);
+    const wrong = JSON.stringify([{ from: mB, to: mA, cents: 100 }]);
+    await fails(db.query(`select close_room('${room}', '${wrong}'::jsonb)`), /do not settle/);
+    await db.query(`select close_room('${room}', '${ok}'::jsonb)`);
     await as(B);
     await fails(db.query(`select transfer_coins('${room}','${mC}',5,'${tx(7)}')`), /not playing/);
     await fails(db.query(`select join_room('${code}','Zed','{}')`), /closed/);
@@ -101,5 +125,25 @@ describe("ledger", () => {
     const p = await db.query<{ name: string; member_count: number }>(`select * from room_preview('${code}')`);
     expect(p.rows[0].name).toBe("Vigilia");
     expect(p.rows[0].member_count).toBe(3);
+  });
+});
+
+describe("settlement", () => {
+  const pays = async () => (await db.query<{ id: string; to_member: string }>(`select id, to_member from settlement_payments where room_id='${room}' order by cents desc`)).rows;
+
+  it("only the payer approves, only the receiver confirms after approval", async () => {
+    const [toA, toC] = await pays();
+    await as(A);
+    await fails(db.query(`select approve_payment('${toA.id}')`), /not allowed/);
+    await as(B);
+    await fails(db.query(`select confirm_received('${toA.id}')`), /not allowed/);
+    await db.query(`select approve_payment('${toA.id}')`);
+    await db.query(`select approve_payment('${toC.id}')`);
+    await as(A);
+    await db.query(`select confirm_received('${toA.id}')`);
+    expect((await db.query<{ status: string }>(`select status from rooms where id='${room}'`)).rows[0].status).toBe("closing");
+    await as(C);
+    await db.query(`select confirm_received('${toC.id}')`);
+    expect((await db.query<{ status: string }>(`select status from rooms where id='${room}'`)).rows[0].status).toBe("completed");
   });
 });

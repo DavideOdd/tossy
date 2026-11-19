@@ -1,13 +1,14 @@
 import { DENOMS } from "@/lib/money";
 import { parsePayPalMe } from "@/lib/paypal";
 import { generateCode, normalizeCode } from "./code";
-import type { Member, Preview, Profile, RoomRepo, RoomStatus, Snapshot, Transfer } from "./types";
+import type { Payment } from "@/lib/settlement";
+import type { Member, Preview, Profile, RoomRepo, RoomStatus, SettlePayment, Snapshot, Transfer } from "./types";
 
 export type KV = { getItem(k: string): string | null; setItem(k: string, v: string): void };
 export type Bus = { post(code: string): void; onMessage(cb: (code: string) => void): void };
 
 type StoredTransfer = Transfer & { tx: string };
-type Stored = { code: string; name: string; status: RoomStatus; members: Member[]; transfers: StoredTransfer[] };
+type Stored = { code: string; name: string; status: RoomStatus; members: Member[]; transfers: StoredTransfer[]; payments?: SettlePayment[] };
 
 const MAX_MEMBERS = 20;
 const uuid = () => globalThis.crypto.randomUUID();
@@ -52,6 +53,7 @@ export class LocalRepo implements RoomRepo {
       status: r.status,
       members: r.members,
       transfers: r.transfers.map((t) => ({ id: t.id, from: t.from, to: t.to, cents: t.cents, at: t.at })),
+      payments: r.payments ?? [],
       meId: r.members.some((m) => m.id === me) ? me : null,
     };
   }
@@ -141,11 +143,55 @@ export class LocalRepo implements RoomRepo {
     this.save(r);
   }
 
-  async closeRoom(code: string) {
+  async closeRoom(code: string, payments: Payment[]) {
     const r = this.need(code);
     this.ownerOf(r);
     if (r.status !== "playing") throw new Error("wrong state");
+    const net = Object.fromEntries(r.members.map((m) => [m.id, 0]));
+    for (const t of r.transfers) {
+      net[t.from] -= t.cents;
+      net[t.to] += t.cents;
+    }
+    for (const p of payments) {
+      if (!(p.from in net) || !(p.to in net) || p.cents <= 0) throw new Error("payment outside room");
+      net[p.from] += p.cents;
+      net[p.to] -= p.cents;
+    }
+    if (Object.values(net).some((v) => v !== 0)) throw new Error("payments do not settle the balances");
+    r.payments = payments.map((p) => ({ ...p, id: uuid(), approved: false, received: false }));
     r.status = "closing";
+    this.save(r);
+  }
+
+  async setSeats(code: string, order: string[]) {
+    const r = this.need(code);
+    this.ownerOf(r);
+    if (r.status !== "lobby" && r.status !== "playing") throw new Error("wrong state");
+    const ids = r.members.map((m) => m.id);
+    if (order.length !== ids.length || new Set(order).size !== ids.length || !order.every((i) => ids.includes(i))) {
+      throw new Error("order must list every member once");
+    }
+    r.members = order.map((i) => r.members.find((m) => m.id === i)!);
+    this.save(r);
+  }
+
+  private payment(code: string, id: string, who: "from" | "to") {
+    const r = this.need(code);
+    const p = r.payments?.find((x) => x.id === id);
+    if (!p || p[who] !== this.meId(r.code)) throw new Error("not allowed");
+    return { r, p };
+  }
+  async approvePayment(code: string, id: string) {
+    const { r, p } = this.payment(code, id, "from");
+    if (r.status !== "closing") throw new Error("not allowed");
+    p.approved = true;
+    this.save(r);
+  }
+  async confirmReceived(code: string, id: string) {
+    const { r, p } = this.payment(code, id, "to");
+    if (!p.approved) throw new Error("not allowed or not approved");
+    p.received = true;
+    if (r.payments!.every((x) => x.received)) r.status = "completed";
     this.save(r);
   }
 

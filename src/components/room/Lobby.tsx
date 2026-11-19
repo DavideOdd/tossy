@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { Avatar } from "@/components/avatar/Avatar";
+import { SeatingSheet } from "@/components/room/SeatingSheet";
 import { LocalNotice, Shell, primaryBtn } from "@/components/room/Shell";
 import { getRepo, roomUrl } from "@/lib/rooms";
 import { parsePayPalMe } from "@/lib/paypal";
@@ -14,6 +15,7 @@ export function Lobby({ snap }: { snap: Snapshot }) {
   const [pp, setPp] = useState(me.paypalMe ?? "");
   const [ppState, setPpState] = useState<"idle" | "saved" | "bad">("idle");
   const [err, setErr] = useState<string | null>(null);
+  const [seating, setSeating] = useState(false);
   const link = roomUrl(snap.code);
   const msg = `Vieni a giocare a "${snap.name}" su Tossy! Codice ${snap.code} — ${link}`;
   const canStart = me.isOwner && snap.members.length >= 2;
@@ -44,6 +46,11 @@ export function Lobby({ snap }: { snap: Snapshot }) {
 
       <section aria-label="Partecipanti" className="mb-5">
         <p className="mb-3 text-xs uppercase tracking-widest text-cream-50/60">Al tavolo · {snap.members.length}</p>
+        {me.isOwner && snap.members.length > 1 && (
+          <button onClick={() => setSeating(true)} className="mb-4 min-h-11 w-full rounded-full bg-felt-700 text-sm font-bold ring-1 ring-gold-500/50 active:scale-95">
+            Disponi il tavolo (ordine dei posti)
+          </button>
+        )}
         <ul className="grid grid-cols-3 gap-4">
           <AnimatePresence>
             {snap.members.map((m) => (
@@ -52,7 +59,7 @@ export function Lobby({ snap }: { snap: Snapshot }) {
                   <Avatar cfg={m.avatar} size={64} />
                   {m.isOwner && <span className="absolute -right-1 -top-1 text-lg" aria-label="Organizzatore">⭐</span>}
                 </div>
-                <span className="max-w-full truncate text-sm font-semibold">{m.id === snap.meId ? `${m.nickname} (tu)` : m.nickname}</span>
+                <span className="max-w-full truncate text-sm font-semibold">{snap.members.indexOf(m) + 1}. {m.id === snap.meId ? `${m.nickname} (tu)` : m.nickname}</span>
               </motion.li>
             ))}
           </AnimatePresence>
@@ -112,6 +119,7 @@ export function Lobby({ snap }: { snap: Snapshot }) {
           <p className="text-center text-cream-50/70">In attesa che l’organizzatore inizi la partita…</p>
         )}
       </div>
+      {me.isOwner && <SeatingSheet open={seating} onClose={() => setSeating(false)} members={snap.members} meId={snap.meId} onSave={(o) => repo.setSeats(snap.code, o)} />}
     </Shell>
   );
 }

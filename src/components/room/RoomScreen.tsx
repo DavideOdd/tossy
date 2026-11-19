@@ -3,12 +3,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { Lobby } from "@/components/room/Lobby";
 import { ProfileEditor } from "@/components/room/ProfileEditor";
+import { SeatingSheet } from "@/components/room/SeatingSheet";
 import { LocalNotice, Shell, primaryBtn } from "@/components/room/Shell";
 import { TableView } from "@/components/table/TableView";
 import type { Player } from "@/components/table/players";
 import { useRoom } from "@/hooks/useRoom";
 import { getRepo } from "@/lib/rooms";
 import { normalizeCode } from "@/lib/rooms/code";
+import { balancesFromLedger, settle } from "@/lib/settlement";
 import { loadProfile, saveProfile } from "@/lib/rooms/profile";
 import type { Profile, Snapshot } from "@/lib/rooms/types";
 
@@ -47,20 +49,33 @@ function JoinGate({ code }: { code: string }) {
 
 function Playing({ snap }: { snap: Snapshot }) {
   const repo = getRepo();
-  const players: Player[] = snap.members.map((m) => ({ id: m.id, name: m.nickname, cfg: m.avatar }));
-  const me = snap.members.find((m) => m.id === snap.meId)!;
+  const [seating, setSeating] = useState(false);
+  const mine = snap.members.findIndex((m) => m.id === snap.meId);
+  const me = snap.members[mine];
+  // Seat order is clockwise; each player sees themself at the bottom and the others in that order.
+  const turn = [...snap.members.slice(mine + 1), ...snap.members.slice(0, mine)];
+  const players: Player[] = [me, ...turn].map((m) => ({ id: m.id, name: m.nickname, cfg: m.avatar, paypalMe: m.paypalMe }));
+  const ids = snap.members.map((m) => m.id);
   return (
-    <TableView
-      roomName={snap.name}
-      code={snap.code}
-      players={players}
-      meId={snap.meId!}
-      ledger={snap.transfers}
-      status={snap.status}
-      canClose={me.isOwner}
-      onThrow={(to, cents) => repo.transfer(snap.code, to, cents, crypto.randomUUID())}
-      onClose={() => repo.closeRoom(snap.code)}
-    />
+    <>
+      <TableView
+        roomName={snap.name}
+        code={snap.code}
+        players={players}
+        meId={snap.meId!}
+        ledger={snap.transfers}
+        payments={snap.payments}
+        status={snap.status}
+        canClose={me.isOwner}
+        onThrow={(to, cents) => repo.transfer(snap.code, to, cents, crypto.randomUUID())}
+        onClose={() => repo.closeRoom(snap.code, settle(balancesFromLedger(ids, snap.transfers)))}
+        onApprove={(id) => repo.approvePayment(snap.code, id)}
+        onReceived={(id) => repo.confirmReceived(snap.code, id)}
+        onSetPaypal={(h) => repo.setPaypal(snap.code, h)}
+        onArrange={me.isOwner ? () => setSeating(true) : undefined}
+      />
+      {me.isOwner && <SeatingSheet open={seating} onClose={() => setSeating(false)} members={snap.members} meId={snap.meId} onSave={(o) => repo.setSeats(snap.code, o)} />}
+    </>
   );
 }
 
