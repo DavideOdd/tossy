@@ -1,5 +1,8 @@
 # Design system — "Tavolo da gioco natalizio"
 
+> **Revisione minimal (v2).** Tavolo verde pino quasi nero, piatto (niente grana), una luce morbida dall'alto. Il colore vive nelle monete e negli avatar; l'interfaccia è carta e filetti. Azione primaria = pillola crema con testo scuro; secondaria = solo filetto `white/20`. Titoli Fraunces peso 500 senza "wonk", testo Manrope, etichette in minuscolo (niente maiuscoletto con tracking). Bordi `white/10`, niente ombre colorate. Token (nomi invariati): felt-900 `#0A1F19`, felt-700 `#14332A`, felt-500 `#1D453A`, gold-300/500/700 `#E6D3A0/#C4A25C/#8C7340`, cream-50 `#F4EFE2`, berry-600 `#A8322C`. Le sezioni sotto descrivono l'idea originale; dove differiscono, vale questa.
+
+
 Direzione: gioco da tavolo elegante di una casa in montagna a Natale. Feltro verde, legno scuro, oro spazzolato, rosso bacca. Festivo ma adulto: niente fiocchi di neve clipart, niente caratteri infantili.
 
 ## Token colore

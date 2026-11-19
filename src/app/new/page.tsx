@@ -20,8 +20,8 @@ function Form() {
   return (
     <div className="space-y-6">
       <label className="block">
-        <span className="text-xs uppercase tracking-widest text-cream-50/60">Nome della partita</span>
-        <input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} className="mt-1 h-12 w-full rounded-xl border border-gold-500/40 bg-felt-900/70 px-3 text-lg font-semibold outline-none focus:border-gold-300" />
+        <span className="text-xs text-cream-50/60">Nome della partita</span>
+        <input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} className="mt-1 h-12 w-full rounded-xl border border-white/10 bg-white/[.05] px-3 text-lg font-semibold outline-none focus:border-gold-300" />
       </label>
       <ProfileEditor value={profile} onChange={setProfile} />
       {repo.kind === "local" && <LocalNotice />}

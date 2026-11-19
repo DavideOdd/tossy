@@ -46,7 +46,7 @@ function Hat({ hat }: { hat: AvatarCfg["hat"] }) {
 export function Avatar({ cfg, size = 64 }: { cfg: AvatarCfg; size?: number }) {
   return (
     <div
-      className="overflow-hidden rounded-full ring-2 ring-gold-500/80"
+      className="overflow-hidden rounded-full ring-2 ring-white/10"
       style={{ width: size, height: size, boxShadow: "0 6px 14px rgba(0,0,0,.45)" }}
     >
       <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>

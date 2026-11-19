@@ -32,14 +32,14 @@ export function ProfileEditor({ value, onChange }: { value: Profile; onChange: (
       <div className="flex items-center gap-4">
         <Avatar cfg={value.avatar} size={84} />
         <label className="flex-1">
-          <span className="text-xs uppercase tracking-widest text-cream-50/60">Il tuo nome</span>
+          <span className="text-xs text-cream-50/60">Il tuo nome</span>
           <input
             value={value.nickname}
             maxLength={24}
             onChange={(e) => onChange({ ...value, nickname: e.target.value })}
             placeholder="Es. Zia Franca"
             autoComplete="nickname"
-            className="mt-1 h-12 w-full rounded-xl border border-gold-500/40 bg-felt-900/70 px-3 text-lg font-semibold outline-none placeholder:text-cream-50/30 focus:border-gold-300"
+            className="mt-1 h-12 w-full rounded-xl border border-white/10 bg-white/[.05] px-3 text-lg font-semibold outline-none placeholder:text-cream-50/30 focus:border-gold-300"
           />
         </label>
       </div>
@@ -51,7 +51,7 @@ export function ProfileEditor({ value, onChange }: { value: Profile; onChange: (
             role="radio"
             aria-checked={value.avatar.hat === h}
             onClick={() => set({ hat: h })}
-            className={`min-h-11 rounded-full px-3 text-sm font-semibold ring-1 ${value.avatar.hat === h ? "bg-gold-500 text-walnut-900 ring-gold-300" : "bg-felt-900/70 ring-gold-500/30"}`}
+            className={`min-h-11 rounded-full px-3 text-sm font-semibold ring-1 ${value.avatar.hat === h ? "bg-gold-500 text-walnut-900 ring-gold-300" : "bg-white/[.05] ring-white/10"}`}
           >
             {HAT_LABEL[h]}
           </button>

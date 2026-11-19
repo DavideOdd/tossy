@@ -2,6 +2,8 @@
 Formato [Keep a Changelog](https://keepachangelog.com/it/1.1.0/), versioning [SemVer](https://semver.org/lang/it/).
 
 ## [Unreleased]
+### Changed (grafica v2)
+- Interfaccia più minimal e pulita: sfondo piatto, niente grana, bordi sottili, pulsante primario crema, titoli più leggeri, etichette in minuscolo, icona audio al posto dell'emoji.
 ### Added (Fase 4)
 - Posti: l'organizzatore ordina i giocatori in senso orario ("Disponi il tavolo", in lobby e a partita in corso); ognuno vede sé stesso in basso e gli altri nell'ordine reale. Migrazione `0003` (`members.seat`, `set_seats`).
 - Pagamenti di fine partita: `close_room` pubblica i pagamenti (il server verifica che azzerino i saldi), il pagatore approva, solo allora compare il link PayPal.Me con importo, chi riceve conferma; a conferma totale la stanza è `completed`. Chi deve ricevere può aggiungere il PayPal.Me dal foglio pagamenti.

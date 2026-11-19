@@ -22,15 +22,15 @@ export function Lobby({ snap }: { snap: Snapshot }) {
 
   return (
     <Shell title={snap.name} back="/">
-      <section className="mb-5 rounded-3xl border border-gold-500/40 bg-felt-900/60 p-5 text-center shadow-[inset_0_6px_20px_rgba(0,0,0,.4)]">
-        <p className="text-xs uppercase tracking-[0.25em] text-cream-50/60">Codice stanza</p>
-        <p className="gold-text font-display text-6xl font-extrabold tracking-[0.18em]">{snap.code}</p>
+      <section className="mb-5 rounded-3xl border border-white/10 bg-white/[.04] p-5 text-center ">
+        <p className="text-xs text-cream-50/60">Codice stanza</p>
+        <p className="gold-text font-display text-6xl font-semibold tracking-[0.18em]">{snap.code}</p>
         <div className="mt-4 grid grid-cols-2 gap-2">
           <a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer" className="grid min-h-12 place-items-center rounded-full bg-[#1f9d55] font-bold ring-1 ring-white/30 active:scale-95">
             Invita su WhatsApp
           </a>
           <button
-            className="min-h-12 rounded-full bg-felt-700 font-bold ring-1 ring-gold-500/50 active:scale-95"
+            className="min-h-12 rounded-full bg-felt-700 font-bold ring-1 ring-white/10 active:scale-95"
             onClick={async () => {
               try {
                 await navigator.clipboard.writeText(link);
@@ -45,9 +45,9 @@ export function Lobby({ snap }: { snap: Snapshot }) {
       </section>
 
       <section aria-label="Partecipanti" className="mb-5">
-        <p className="mb-3 text-xs uppercase tracking-widest text-cream-50/60">Al tavolo · {snap.members.length}</p>
+        <p className="mb-3 text-xs text-cream-50/60">Al tavolo · {snap.members.length}</p>
         {me.isOwner && snap.members.length > 1 && (
-          <button onClick={() => setSeating(true)} className="mb-4 min-h-11 w-full rounded-full bg-felt-700 text-sm font-bold ring-1 ring-gold-500/50 active:scale-95">
+          <button onClick={() => setSeating(true)} className="mb-4 min-h-11 w-full rounded-full bg-felt-700 text-sm font-bold ring-1 ring-white/10 active:scale-95">
             Disponi il tavolo (ordine dei posti)
           </button>
         )}
@@ -68,7 +68,7 @@ export function Lobby({ snap }: { snap: Snapshot }) {
 
       <section className="mb-5">
         <label className="block">
-          <span className="text-xs uppercase tracking-widest text-cream-50/60">Il tuo PayPal.Me (facoltativo)</span>
+          <span className="text-xs text-cream-50/60">Il tuo PayPal.Me (facoltativo)</span>
           <div className="mt-1 flex gap-2">
             <input
               value={pp}
@@ -78,10 +78,10 @@ export function Lobby({ snap }: { snap: Snapshot }) {
               }}
               placeholder="paypal.me/iltuonome"
               autoCapitalize="none"
-              className="h-12 min-w-0 flex-1 rounded-xl border border-gold-500/40 bg-felt-900/70 px-3 outline-none focus:border-gold-300"
+              className="h-12 min-w-0 flex-1 rounded-xl border border-white/10 bg-white/[.05] px-3 outline-none focus:border-gold-300"
             />
             <button
-              className="min-h-12 rounded-xl bg-felt-700 px-4 font-bold ring-1 ring-gold-500/50 active:scale-95"
+              className="min-h-12 rounded-xl bg-felt-700 px-4 font-bold ring-1 ring-white/10 active:scale-95"
               onClick={async () => {
                 const h = pp.trim() === "" ? "" : parsePayPalMe(pp);
                 if (h === null) return setPpState("bad");

@@ -24,7 +24,7 @@ export function BalanceCounter({ value, className = "" }: { value: number; class
       initial={{ scale: 1.4 }}
       animate={{ scale: 1 }}
       transition={{ type: "spring", stiffness: 420, damping: 16 }}
-      className={`tabular inline-block font-display font-extrabold ${color} ${className}`}
+      className={`tabular inline-block font-display font-semibold ${color} ${className}`}
     >
       {fmtSigned(shown)}
     </motion.span>

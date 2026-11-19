@@ -116,7 +116,7 @@ export function TableView({
     <main className="relative mx-auto flex h-dvh max-w-md select-none flex-col overflow-hidden pt-[env(safe-area-inset-top)]">
       <header className="flex items-start justify-between px-5 pt-4">
         <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.18em] text-gold-300/80">Stanza · {code}</p>
+          <p className="text-xs text-gold-300/80">Stanza · {code}</p>
           <h1 className="font-display truncate text-2xl font-bold leading-tight">{roomName}</h1>
         </div>
         <div className="flex gap-2">
@@ -127,28 +127,31 @@ export function TableView({
               setMuted(!isMuted());
               setMute(isMuted());
             }}
-            className="grid h-11 w-11 place-items-center rounded-full bg-felt-900/70 ring-1 ring-gold-500/50"
+            className="grid h-11 w-11 place-items-center rounded-full bg-white/[.05] ring-1 ring-white/10"
           >
-            {mute ? "🔇" : "🔔"}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4Z" />
+              {mute ? <path d="m16 9.5 5 5m0-5-5 5" /> : <path d="M16 9a4.2 4.2 0 0 1 0 6m2.4-8.4a7.6 7.6 0 0 1 0 10.8" />}
+            </svg>
           </button>
           {onArrange && playing && (
-            <button onClick={onArrange} className="min-h-11 rounded-full bg-felt-900/70 px-4 text-sm font-semibold ring-1 ring-gold-500/50">
+            <button onClick={onArrange} className="min-h-11 rounded-full bg-white/[.05] px-4 text-sm font-semibold ring-1 ring-white/10">
               Posti
             </button>
           )}
-          <button onClick={() => setSheet("history")} className="min-h-11 rounded-full bg-felt-900/70 px-4 text-sm font-semibold ring-1 ring-gold-500/50">
+          <button onClick={() => setSheet("history")} className="min-h-11 rounded-full bg-white/[.05] px-4 text-sm font-semibold ring-1 ring-white/10">
             Storico
           </button>
         </div>
       </header>
 
       <section className="px-5 pt-3 text-center">
-        <p className="text-xs uppercase tracking-[0.2em] text-cream-50/60">Il tuo saldo</p>
+        <p className="text-xs text-cream-50/60">Il tuo saldo</p>
         <BalanceCounter value={balances[meId] ?? 0} className="text-6xl" />
       </section>
 
       <section className="relative flex-1">
-        <div className="pointer-events-none absolute inset-x-2 inset-y-4 rounded-[50%] border border-gold-500/25 bg-felt-900/30 shadow-[inset_0_10px_40px_rgba(0,0,0,.45)]" />
+        <div className="pointer-events-none absolute inset-x-2 inset-y-4 rounded-[50%] border border-white/10 bg-white/[.02] " />
         {others.map((p, i) => {
           const pos = seatPos(i, others.length);
           const hot = hoverId === p.id;
@@ -172,7 +175,7 @@ export function TableView({
                 </AnimatePresence>
                 <AnimatePresence>
                   {mine.map((q) => (
-                    <motion.span key={`n${q.id}`} className="font-display pointer-events-none absolute -top-2 left-1/2 text-2xl font-extrabold text-gold-300 drop-shadow" initial={{ y: 0, x: "-50%", opacity: 1 }} animate={{ y: -46, opacity: 0 }} transition={{ duration: 0.85, ease: "easeOut" }}>
+                    <motion.span key={`n${q.id}`} className="font-display pointer-events-none absolute -top-2 left-1/2 text-2xl font-semibold text-gold-300 drop-shadow" initial={{ y: 0, x: "-50%", opacity: 1 }} animate={{ y: -46, opacity: 0 }} transition={{ duration: 0.85, ease: "easeOut" }}>
                       +{fmtCoin(q.n)}
                     </motion.span>
                   ))}
@@ -199,7 +202,7 @@ export function TableView({
           <p className="w-24 text-xs leading-snug text-cream-50/70">
             {!playing ? "Partita chiusa" : ledger.length === 0 ? "Trascina la moneta su un amico" : "Lancia di nuovo!"}
           </p>
-          <div ref={trayRef} className={`relative grid h-28 w-28 place-items-center rounded-full border-2 border-dashed border-gold-500/50 bg-felt-900/70 shadow-[inset_0_6px_18px_rgba(0,0,0,.55)] ${playing ? "" : "opacity-40"}`}>
+          <div ref={trayRef} className={`relative grid h-28 w-28 place-items-center rounded-full border-2 border-solid border-white/10 bg-white/[.05]  ${playing ? "" : "opacity-40"}`}>
             <motion.div
               drag={playing && !flying && others.length > 0}
               dragMomentum={false}
@@ -214,15 +217,15 @@ export function TableView({
             </motion.div>
           </div>
           {playing && canClose ? (
-            <button onClick={() => setSheet("settle")} className="min-h-11 w-24 rounded-2xl bg-berry-600 px-2 text-sm font-bold shadow-lg ring-1 ring-gold-300/60 active:scale-95">
+            <button onClick={() => setSheet("settle")} className="min-h-11 w-28 rounded-full bg-cream-50 text-felt-900 px-3 text-sm font-semibold ring-1 ring-white/10 active:scale-95">
               Chiudi partita
             </button>
           ) : !playing ? (
-            <button onClick={() => setSheet("settle")} className="min-h-11 w-24 rounded-2xl bg-berry-600 px-2 text-sm font-bold shadow-lg ring-1 ring-gold-300/60 active:scale-95">
+            <button onClick={() => setSheet("settle")} className="min-h-11 w-28 rounded-full bg-cream-50 text-felt-900 px-3 text-sm font-semibold ring-1 ring-white/10 active:scale-95">
               Vedi pagamenti
             </button>
           ) : (
-            <span className="w-24" />
+            <span className="w-28" />
           )}
         </div>
       </footer>
@@ -245,7 +248,7 @@ export function TableView({
 
       <AnimatePresence>
         {err && (
-          <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-x-0 bottom-40 z-50 mx-auto w-fit rounded-full bg-berry-800 px-4 py-2 text-sm font-semibold ring-1 ring-gold-300/60">
+          <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-x-0 bottom-40 z-50 mx-auto w-fit rounded-full bg-berry-800 px-4 py-2 text-sm font-semibold ring-1 ring-white/10">
             {err}
           </motion.p>
         )}
@@ -257,7 +260,7 @@ export function TableView({
         ) : (
           <ul className="space-y-2">
             {[...ledger].reverse().map((e) => (
-              <li key={e.id} className="flex justify-between rounded-xl bg-felt-900/60 px-3 py-2 text-sm">
+              <li key={e.id} className="flex justify-between rounded-xl bg-white/[.04] px-3 py-2 text-sm">
                 <span>
                   {names[e.from]} → <b>{names[e.to]}</b>
                 </span>

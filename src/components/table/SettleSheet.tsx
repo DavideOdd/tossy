@@ -9,16 +9,16 @@ import { settle } from "@/lib/settlement";
 import { jingle } from "@/lib/sound";
 import type { Player } from "./players";
 
-const btn = "min-h-11 rounded-full px-4 text-sm font-bold shadow-lg ring-1 ring-gold-300/60 transition active:scale-95";
+const btn = "min-h-11 rounded-full px-4 text-sm font-bold ring-1 ring-white/10 transition active:scale-95";
 
 function PayPalSetup({ onSave }: { onSave: (h: string) => void | Promise<void> }) {
   const [v, setV] = useState("");
   const [bad, setBad] = useState(false);
   return (
-    <div className="mt-4 rounded-2xl border border-gold-500/30 bg-felt-900/60 p-3">
+    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[.04] p-3">
       <p className="mb-2 text-sm">Devi ricevere dei soldi: aggiungi il tuo PayPal.Me così chi paga può aprire il link.</p>
       <div className="flex gap-2">
-        <input value={v} onChange={(e) => { setV(e.target.value); setBad(false); }} placeholder="paypal.me/iltuonome" autoCapitalize="none" className="h-11 min-w-0 flex-1 rounded-xl border border-gold-500/40 bg-felt-900/70 px-3 outline-none focus:border-gold-300" />
+        <input value={v} onChange={(e) => { setV(e.target.value); setBad(false); }} placeholder="paypal.me/iltuonome" autoCapitalize="none" className="h-11 min-w-0 flex-1 rounded-xl border border-white/10 bg-white/[.05] px-3 outline-none focus:border-gold-300" />
         <button className={`${btn} bg-felt-700`} onClick={() => { const h = parsePayPalMe(v); if (!h) return setBad(true); void onSave(h); }}>Salva</button>
       </div>
       {bad && <p className="mt-1 text-xs text-[#ff9a94]">Non sembra un PayPal.Me valido</p>}
@@ -64,7 +64,7 @@ export function SettleSheet({
             let url: string | null = null;
             try { url = handle ? buildPayPalMeUrl(handle, p.cents) : null; } catch {}
             return (
-              <li key={p.id} className="rounded-2xl border border-gold-500/30 bg-felt-900/60 p-3">
+              <li key={p.id} className="rounded-2xl border border-white/10 bg-white/[.04] p-3">
                 <div className="flex items-center gap-3">
                   <Avatar cfg={byId[p.from].cfg} size={44} />
                   <div className="min-w-0 flex-1 text-sm">
@@ -74,7 +74,7 @@ export function SettleSheet({
                   {closed && <span className="text-xs text-cream-50/70">{p.received ? "Ricevuto ✓" : p.approved ? "Approvato" : "In attesa"}</span>}
                 </div>
                 {closed && p.from === meId && !p.approved && (
-                  <button className={`${btn} mt-3 w-full bg-berry-600`} onClick={() => { jingle(); void onApprove(p.id); }}>Approvo il pagamento</button>
+                  <button className={`${btn} mt-3 w-full bg-cream-50 text-felt-900`} onClick={() => { jingle(); void onApprove(p.id); }}>Approvo il pagamento</button>
                 )}
                 {closed && p.from === meId && p.approved && !p.received && (
                   url ? (
@@ -95,7 +95,7 @@ export function SettleSheet({
       {status === "completed" && <p className="mt-5 text-center font-display text-xl font-bold text-gold-300">Tutto saldato. Buon Natale! 🎄</p>}
       {needsPaypal && <PayPalSetup onSave={onSetPaypal} />}
       {canClose && status === "playing" && (
-        <button onClick={() => void onConfirmClose()} className="mt-5 min-h-12 w-full rounded-full bg-berry-600 py-3 font-extrabold shadow-lg ring-1 ring-gold-300/70 active:scale-[.98]">
+        <button onClick={() => void onConfirmClose()} className="mt-5 min-h-12 w-full rounded-full bg-cream-50 text-felt-900 py-3 font-semibold ring-1 ring-white/10 active:scale-[.98]">
           Conferma e blocca i movimenti
         </button>
       )}

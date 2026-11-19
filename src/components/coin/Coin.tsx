@@ -62,7 +62,7 @@ function Face({ cents, d, back }: { cents: number; d: number; back?: boolean }) 
           style={{ inset: "12%", border: "1.5px solid rgba(60,35,0,.4)", boxShadow: "inset 0 2px 4px rgba(60,35,0,.35), 0 1px 0 rgba(255,255,255,.45)" }}
         />
       )}
-      <div className="font-display absolute inset-0 grid place-items-center text-center font-extrabold leading-none" style={{ color: ink }}>
+      <div className="font-display absolute inset-0 grid place-items-center text-center font-semibold leading-none" style={{ color: ink }}>
         <span
           style={{
             fontSize: d * (inner ? 0.34 : num),
