@@ -1,7 +1,7 @@
 # Calcolo saldi e ottimizzazione pagamenti
 
 ## Input / output
-Saldi netti in monete `b_i` (Σ b_i = 0). Importo in centesimi = `b_i × coin_value_cents` (interi, mai float). Output: lista di pagamenti `(payer → payee, cents)`.
+Saldi netti in **centesimi** `b_i` (Σ b_i = 0), sempre interi, mai float. Le monete sono tagli euro reali (1, 2, 5, 10, 20, 50 cent, 1 €, 2 €): il ledger somma direttamente i centesimi. Output: lista di pagamenti `(payer → payee, cents)`.
 
 ## Algoritmo (min-cash-flow greedy)
 1. Separa creditori (`b>0`) e debitori (`b<0`); ignora i saldi 0.

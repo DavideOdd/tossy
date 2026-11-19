@@ -20,8 +20,8 @@ Display: **Fraunces** (variable, opsz/wonk) per titoli e saldi · Testo UI: **Ma
 ## Forma e profondità
 Raggio 16/24 px · ombre calde stratificate (mai nero puro) · bordi oro 1 px con highlight interno · texture feltro e legno via SVG `feTurbulence` (zero raster).
 
-## Moneta
-Layer SVG/CSS: disco con gradiente conico oro, anello zigrinato (repeating-conic-gradient), faccia con "T" Tossy incisa (inner shadow), highlight speculare che segue inclinazione (pointer o `DeviceOrientation`). Rotazione 3D `rotateY/rotateX` con `perspective`; spessore simulato con 6–8 layer impilati.
+## Monete (euro reali)
+Otto tagli con diametri e metalli veri: **rame** (1, 2, 5 cent), **nordic gold** (10, 20, 50 cent), **bimetalliche** (1 € oro/argento, 2 € argento/oro). Valore inciso sulla faccia, retro con "T" Tossy. Layer CSS: disco con gradiente conico per metallo, anello zigrinato (repeating-conic-gradient), highlight speculare che segue inclinazione (pointer o `DeviceOrientation`). Rotazione 3D `rotateY/rotateX` con `perspective`; spessore simulato con 6–8 layer impilati.
 
 ## Avatar
 Componibili in SVG: forma testa, cappello natalizio (Babbo, elfo, renna, cappello lana), occhiali, sciarpa, colore sfondo. Generati da seed → 1 stringa JSON salvata.

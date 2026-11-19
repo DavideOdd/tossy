@@ -4,7 +4,8 @@ import { Avatar } from "@/components/avatar/Avatar";
 import { Sheet } from "@/components/ui/Sheet";
 import { settle } from "@/lib/settlement";
 import { jingle } from "@/lib/sound";
-import { DEMO_PLAYERS, ME, fmtEuro } from "./players";
+import { fmtMoney } from "@/lib/money";
+import { DEMO_PLAYERS, ME } from "./players";
 
 const byId = Object.fromEntries(DEMO_PLAYERS.map((p) => [p.id, p]));
 
@@ -12,12 +13,10 @@ export function SettleSheet({
   open,
   onClose,
   balances,
-  coinCents,
 }: {
   open: boolean;
   onClose: () => void;
   balances: Record<string, number>;
-  coinCents: number;
 }) {
   const payments = useMemo(() => (open ? settle(balances) : []), [open, balances]);
   const [approved, setApproved] = useState<Record<number, boolean>>({});
@@ -37,7 +36,7 @@ export function SettleSheet({
                   <p className="truncate">
                     <b>{byId[p.from].name}</b> paga <b>{byId[p.to].name}</b>
                   </p>
-                  <p className="font-display text-lg font-bold text-gold-300">{fmtEuro(p.coins * coinCents)}</p>
+                  <p className="font-display text-lg font-bold text-gold-300">{fmtMoney(p.cents)}</p>
                 </div>
                 {mine ? (
                   <button

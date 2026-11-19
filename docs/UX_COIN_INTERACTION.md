@@ -6,10 +6,10 @@ Tavolo ovale visto dall'alto; i partecipanti siedono attorno (self in basso). Su
 ## Gesto: sequenza
 1. **Pickup**: tap/press sulla moneta → si solleva (scale 1.15, ombra allunga, tintinnio breve, vibrazione).
 2. **Drag**: segue il dito con inerzia (spring), rotazione 3D proporzionale alla velocità, highlight speculare dinamico. Gli avatar si illuminano e si ingrandiscono avvicinandosi (magnetismo entro 90 px).
-3. **Quantità**: rilascio singolo = 1 moneta. *Long-press* prima del drag o tap sul vassoio apre stepper (1, 2, 5, 10 / personalizzato) → moneta con badge «×N» (pila).
+3. **Taglio**: una fila di 8 monete euro reali (1, 2, 5, 10, 20, 50 cent, 1 €, 2 €) in scala fedele ai diametri veri; si tocca il taglio e quella è la moneta che si lancia. Un lancio = una moneta = il suo valore.
 4. **Release/Flick**: si legge la velocità del puntatore; il punto d'arrivo = avatar più vicino alla traiettoria proiettata (hit-test + cono di tolleranza).
 5. **Volo**: arco parabolico con rotazioni sull'asse, scia dorata, ombra sul feltro che si stacca e si riunisce.
-6. **Arrivo**: rimbalzo sull'avatar, onda dorata, tonfo, +N fluttuante; contatori di mittente e destinatario con rolling digits (verde/oro credito, bordeaux debito).
+6. **Arrivo**: rimbalzo sull'avatar, onda dorata, tonfo, +valore fluttuante (es. «+50c», «+€2»); contatori di mittente e destinatario con rolling digits (verde/oro credito, bordeaux debito).
 7. **Rilascio fuori bersaglio**: la moneta torna al vassoio con molla (nessun trasferimento).
 8. **Errore server**: moneta torna indietro con scossa + toast; saldo ripristinato.
 

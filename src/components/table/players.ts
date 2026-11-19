@@ -21,6 +21,3 @@ export function seatPos(i: number, m: number) {
   const r = (deg * Math.PI) / 180;
   return { left: 50 + 38 * Math.cos(r), top: 68 - 44 * Math.sin(r) };
 }
-
-export const fmtEuro = (cents: number) =>
-  new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);

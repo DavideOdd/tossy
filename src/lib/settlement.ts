@@ -1,9 +1,9 @@
-export type Payment = { from: string; to: string; coins: number };
+export type Payment = { from: string; to: string; cents: number };
 
 /**
  * Min-cash-flow greedy: matches the largest debtor with the largest creditor.
  * Guarantees at most n-1 payments. Deterministic (ties broken by id).
- * Input: net balance in coins per member (must sum to 0).
+ * Input: net balance in cents per member (must sum to 0).
  */
 export function settle(balances: Record<string, number>): Payment[] {
   const sum = Object.values(balances).reduce((a, b) => a + b, 0);
@@ -22,10 +22,10 @@ export function settle(balances: Record<string, number>): Payment[] {
   while (creditors.length && debtors.length) {
     const c = creditors[0];
     const d = debtors[0];
-    const coins = Math.min(c[1], d[1]);
-    payments.push({ from: d[0], to: c[0], coins });
-    c[1] -= coins;
-    d[1] -= coins;
+    const cents = Math.min(c[1], d[1]);
+    payments.push({ from: d[0], to: c[0], cents });
+    c[1] -= cents;
+    d[1] -= cents;
     if (c[1] === 0) creditors.shift();
     if (d[1] === 0) debtors.shift();
     creditors.sort(byAmountThenId);
@@ -34,15 +34,15 @@ export function settle(balances: Record<string, number>): Payment[] {
   return payments;
 }
 
-/** Net balances (coins) from a ledger of transfers. */
+/** Net balances (cents) from a ledger of transfers. */
 export function balancesFromLedger(
   members: string[],
-  ledger: { from: string; to: string; coins: number }[],
+  ledger: { from: string; to: string; cents: number }[],
 ): Record<string, number> {
   const b: Record<string, number> = Object.fromEntries(members.map((m) => [m, 0]));
   for (const t of ledger) {
-    b[t.from] -= t.coins;
-    b[t.to] += t.coins;
+    b[t.from] -= t.cents;
+    b[t.to] += t.cents;
   }
   return b;
 }

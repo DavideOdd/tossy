@@ -1,6 +1,7 @@
 "use client";
 import { animate, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { fmtSigned } from "@/lib/money";
 
 export function BalanceCounter({ value, className = "" }: { value: number; className?: string }) {
   const [shown, setShown] = useState(value);
@@ -25,8 +26,7 @@ export function BalanceCounter({ value, className = "" }: { value: number; class
       transition={{ type: "spring", stiffness: 420, damping: 16 }}
       className={`tabular inline-block font-display font-extrabold ${color} ${className}`}
     >
-      {shown > 0 ? "+" : shown < 0 ? "−" : ""}
-      {Math.abs(shown)}
+      {fmtSigned(shown)}
     </motion.span>
   );
 }

@@ -1,6 +1,6 @@
 # 🪙 Tossy — *Pass the coin*
 
-Le monetine dei giochi natalizi, ma digitali. Si crea una stanza, gli amici entrano da un link WhatsApp, e le monete si **lanciano con un gesto** verso l'avatar di chi vince. A fine partita Tossy calcola chi deve pagare chi, con il minor numero di pagamenti, e genera i link PayPal — **mai nessun addebito automatico**.
+Le monetine dei giochi natalizi, ma digitali — con le **vere monete dell'euro** (da 1 centesimo a 2 euro). Si crea una stanza, gli amici entrano da un link WhatsApp, e le monete si **lanciano con un gesto** verso l'avatar di chi vince. A fine partita Tossy calcola chi deve pagare chi, con il minor numero di pagamenti, e genera i link PayPal — **mai nessun addebito automatico**.
 
 > Stato: **Fase 1 completata — prototipo giocabile locale su `/table`** · Repo privata · Vedi [ROADMAP](docs/ROADMAP.md)
 

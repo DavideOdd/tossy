@@ -8,7 +8,7 @@ describe("settle", () => {
   });
 
   it("settles a simple case", () => {
-    expect(settle({ a: 5, b: -5 })).toEqual([{ from: "b", to: "a", coins: 5 }]);
+    expect(settle({ a: 5, b: -5 })).toEqual([{ from: "b", to: "a", cents: 5 }]);
   });
 
   it("rejects non-zero-sum input", () => {
@@ -20,7 +20,7 @@ describe("settle", () => {
       fc.record({
         from: fc.constantFrom("a", "b", "c", "d", "e", "f"),
         to: fc.constantFrom("a", "b", "c", "d", "e", "f"),
-        coins: fc.integer({ min: 1, max: 50 }),
+        cents: fc.integer({ min: 1, max: 50 }),
       }),
       { maxLength: 60 },
     );
@@ -33,9 +33,9 @@ describe("settle", () => {
         const after = { ...bal };
         for (const p of pays) {
           expect(p.from).not.toBe(p.to);
-          expect(p.coins).toBeGreaterThan(0);
-          after[p.from] += p.coins;
-          after[p.to] -= p.coins;
+          expect(p.cents).toBeGreaterThan(0);
+          after[p.from] += p.cents;
+          after[p.to] -= p.cents;
         }
         expect(Object.values(after).every((v) => v === 0)).toBe(true);
         expect(pays.length).toBeLessThanOrEqual(members.length - 1);

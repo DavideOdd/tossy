@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { Avatar } from "@/components/avatar/Avatar";
 import { Coin } from "@/components/coin/Coin";
 import { Sheet } from "@/components/ui/Sheet";
+import { DENOMS, fmtCoin } from "@/lib/money";
 import { balancesFromLedger } from "@/lib/settlement";
 import { isMuted, setMuted, unlockAudio } from "@/lib/sound";
 import { BalanceCounter } from "./BalanceCounter";
@@ -11,15 +12,13 @@ import { SettleSheet } from "./SettleSheet";
 import { DEMO_PLAYERS, ME, seatPos } from "./players";
 import { useCoinThrow } from "./useCoinThrow";
 
-type Entry = { id: number; from: string; to: string; coins: number };
-const AMOUNTS = [1, 2, 5, 10];
-const COIN_CENTS = 10;
+type Entry = { id: number; from: string; to: string; cents: number };
 const others = DEMO_PLAYERS.filter((p) => p.id !== ME);
 const names = Object.fromEntries(DEMO_PLAYERS.map((p) => [p.id, p.name]));
 
 export function Table() {
   const [ledger, setLedger] = useState<Entry[]>([]);
-  const [amount, setAmount] = useState(1);
+  const [amount, setAmount] = useState(10);
   const [pops, setPops] = useState<{ id: number; to: string; n: number }[]>([]);
   const [sheet, setSheet] = useState<null | "history" | "settle">(null);
   const [mute, setMute] = useState(false);
@@ -34,7 +33,7 @@ export function Table() {
     trayRef,
     onLand: (to) => {
       const id = ++seq.current;
-      setLedger((l) => [{ id, from: ME, to, coins: amount }, ...l]);
+      setLedger((l) => [{ id, from: ME, to, cents: amount }, ...l]);
       setPops((p) => [...p, { id, to, n: amount }]);
       setTimeout(() => setPops((p) => p.filter((q) => q.id !== id)), 900);
     },
@@ -118,7 +117,7 @@ export function Table() {
                         animate={{ y: -46, opacity: 0 }}
                         transition={{ duration: 0.85, ease: "easeOut" }}
                       >
-                        +{q.n}
+                        +{fmtCoin(q.n)}
                       </motion.span>
                     ))}
                 </AnimatePresence>
@@ -131,17 +130,19 @@ export function Table() {
       </section>
 
       <footer className="px-5 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-        <div className="mb-3 flex justify-center gap-2">
-          {AMOUNTS.map((a) => (
+        <div className="-mx-2 mb-3 flex justify-center gap-1" role="radiogroup" aria-label="Scegli la moneta">
+          {DENOMS.map((d) => (
             <button
-              key={a}
-              onClick={() => setAmount(a)}
-              aria-pressed={amount === a}
-              className={`h-11 min-w-11 rounded-full px-4 text-sm font-extrabold ring-1 transition ${
-                amount === a ? "bg-gold-500 text-walnut-900 ring-gold-300" : "bg-felt-900/70 ring-gold-500/40"
+              key={d.cents}
+              role="radio"
+              aria-checked={amount === d.cents}
+              aria-label={fmtCoin(d.cents)}
+              onClick={() => setAmount(d.cents)}
+              className={`grid h-11 w-10 place-items-center rounded-xl transition ${
+                amount === d.cents ? "bg-felt-900 ring-2 ring-gold-300" : "opacity-70 active:scale-95"
               }`}
             >
-              {a}
+              <Coin cents={d.cents} size={36} />
             </button>
           ))}
         </div>
@@ -161,10 +162,10 @@ export function Table() {
               {...handlers}
               style={{ x, y, scale, touchAction: "none", filter: "drop-shadow(0 10px 7px rgba(0,0,0,.5))", zIndex: 30 }}
               className="cursor-grab active:cursor-grabbing"
-              aria-label={`Moneta da ${amount}. Trascinala su un giocatore`}
+              aria-label={`Moneta da ${fmtCoin(amount)}. Trascinala su un giocatore`}
               role="button"
             >
-              <Coin size={84} rotateX={rotX} rotateY={rotY} badge={amount} />
+              <Coin cents={amount} size={84} rotateX={rotX} rotateY={rotY} />
             </motion.div>
           </div>
           <button
@@ -186,13 +187,13 @@ export function Table() {
                 <span>
                   {names[e.from]} → <b>{names[e.to]}</b>
                 </span>
-                <b className="text-gold-300">×{e.coins}</b>
+                <b className="text-gold-300">{fmtCoin(e.cents)}</b>
               </li>
             ))}
           </ul>
         )}
       </Sheet>
-      <SettleSheet open={sheet === "settle"} onClose={() => setSheet(null)} balances={balances} coinCents={COIN_CENTS} />
+      <SettleSheet open={sheet === "settle"} onClose={() => setSheet(null)} balances={balances} />
     </main>
   );
 }
