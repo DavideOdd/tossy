@@ -192,7 +192,7 @@ export function TableView({
       <footer className="px-5 pb-[calc(1rem+env(safe-area-inset-bottom))]">
         <div className="-mx-2 mb-3 flex justify-center gap-1" role="radiogroup" aria-label="Scegli la moneta">
           {DENOMS.map((d) => (
-            <button key={d.cents} role="radio" aria-checked={amount === d.cents} aria-label={fmtCoin(d.cents)} onClick={() => setAmount(d.cents)} className={`grid h-11 w-10 place-items-center rounded-xl transition ${amount === d.cents ? "bg-felt-900 ring-2 ring-gold-300" : "opacity-70 active:scale-95"}`}>
+            <button key={d.cents} role="radio" aria-checked={amount === d.cents} aria-label={fmtCoin(d.cents)} onClick={() => setAmount(d.cents)} className={`grid h-11 w-10 place-items-center rounded-xl transition ${amount === d.cents ? "bg-felt-900 ring-2 ring-gold-300" : "opacity-90 active:scale-95"}`}>
               <Coin cents={d.cents} size={36} />
             </button>
           ))}
@@ -217,15 +217,15 @@ export function TableView({
             </motion.div>
           </div>
           {playing && canClose ? (
-            <button onClick={() => setSheet("settle")} className="min-h-11 w-28 rounded-full bg-cream-50 text-felt-900 px-3 text-sm font-semibold ring-1 ring-white/10 active:scale-95">
+            <button onClick={() => setSheet("settle")} className="min-h-11 whitespace-nowrap rounded-full bg-cream-50 px-4 text-sm font-semibold text-felt-900 ring-1 ring-white/10 active:scale-95">
               Chiudi partita
             </button>
           ) : !playing ? (
-            <button onClick={() => setSheet("settle")} className="min-h-11 w-28 rounded-full bg-cream-50 text-felt-900 px-3 text-sm font-semibold ring-1 ring-white/10 active:scale-95">
+            <button onClick={() => setSheet("settle")} className="min-h-11 whitespace-nowrap rounded-full bg-cream-50 px-4 text-sm font-semibold text-felt-900 ring-1 ring-white/10 active:scale-95">
               Vedi pagamenti
             </button>
           ) : (
-            <span className="w-28" />
+            <span className="w-24" />
           )}
         </div>
       </footer>

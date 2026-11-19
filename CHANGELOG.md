@@ -3,6 +3,7 @@ Formato [Keep a Changelog](https://keepachangelog.com/it/1.1.0/), versioning [Se
 
 ## [Unreleased]
 ### Changed (grafica v2)
+- Monete piatte e minimal: metalli opachi a tinta unita (rame, oro, argento), cifra nitida, niente zigrinatura né riflessi animati; spessore 3D mantenuto per il lancio.
 - Interfaccia più minimal e pulita: sfondo piatto, niente grana, bordi sottili, pulsante primario crema, titoli più leggeri, etichette in minuscolo, icona audio al posto dell'emoji.
 ### Added (Fase 4)
 - Posti: l'organizzatore ordina i giocatori in senso orario ("Disponi il tavolo", in lobby e a partita in corso); ognuno vede sé stesso in basso e gli altri nell'ordine reale. Migrazione `0003` (`members.seat`, `set_seats`).

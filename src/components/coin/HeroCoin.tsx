@@ -19,7 +19,7 @@ export function HeroCoin() {
     <motion.div
       animate={{ y: [0, -10, 0] }}
       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      style={{ filter: "drop-shadow(0 22px 18px rgba(0,0,0,.55))" }}
+      style={{ filter: "drop-shadow(0 18px 14px rgba(0,0,0,.4))" }}
     >
       <Coin cents={200} size={190} rotateX={rotX} rotateY={rotY} />
     </motion.div>
