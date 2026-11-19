@@ -28,3 +28,15 @@ Migrazioni applicate con `supabase db push` solo da `main` dopo CI verde.
 
 ## Note
 Su iOS l'audio WebAudio parte solo dopo un gesto: sbloccarlo al primo tap su «Entra/Crea».
+
+## Collegare Supabase (da modalità locale a reale)
+Senza variabili l'app usa la **modalità locale** (stanze condivise solo tra schede dello stesso browser). Per giocare da telefoni diversi:
+1. Crea un progetto su supabase.com (piano gratuito).
+2. Authentication → Providers → abilita **Anonymous sign-ins**.
+3. SQL Editor → incolla ed esegui `supabase/migrations/0001_rooms_ledger.sql` (oppure `supabase db push`).
+4. Project Settings → API: copia **Project URL** e **anon public key**.
+5. Su GitHub: Settings → Secrets and variables → Actions → **Variables**: `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY` (la anon key è pubblica per progetto; la protezione sono le RLS). Rilancia il workflow Pages.
+6. Mai la `service_role` key nel client o nelle variabili `NEXT_PUBLIC_*`.
+
+## GitHub Pages
+`pages.yml` esegue `next build` con `NEXT_EXPORT=1` e `NEXT_PUBLIC_BASE_PATH=/<repo>`. Il link d'invito è `…/room/?c=CODICE` (codice in query string perché l'export statico non ha rotte dinamiche).

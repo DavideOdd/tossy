@@ -24,9 +24,15 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: scripts/build-demo.sh dist-demo
+      - run: pnpm build
+        env:
+          NEXT_EXPORT: "1"
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          # Optional: set as repository Variables to switch from local mode to real Supabase.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist-demo
+          path: out
       - id: deployment
         uses: actions/deploy-pages@v4

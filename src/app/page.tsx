@@ -16,18 +16,15 @@ export default function Home() {
         <p className="mb-5 text-sm leading-relaxed text-cream-50/80">
           Le monetine della tombola, ma digitali. Lancia la moneta a chi vince, a fine serata Tossy chiude i conti.
         </p>
-        <Link
-          href="/table"
-          className="block min-h-12 rounded-full bg-berry-600 py-3.5 text-lg font-extrabold shadow-[0_10px_30px_rgba(179,32,42,.45)] ring-1 ring-gold-300/70 transition active:scale-[.97]"
-        >
-          Prova il tavolo
+        <Link href="/new" className="block min-h-12 rounded-full bg-berry-600 py-3.5 text-lg font-extrabold shadow-[0_10px_30px_rgba(179,32,42,.45)] ring-1 ring-gold-300/70 transition active:scale-[.97]">
+          Crea una stanza
         </Link>
-        <button
-          disabled
-          className="min-h-12 w-full rounded-full bg-felt-900/70 py-3.5 font-semibold text-cream-50/60 ring-1 ring-gold-500/40"
-        >
-          Entra con codice · presto
-        </button>
+        <Link href="/join" className="block min-h-12 rounded-full bg-felt-900/70 py-3.5 font-semibold ring-1 ring-gold-500/60 transition active:scale-[.97]">
+          Entra con codice
+        </Link>
+        <Link href="/table" className="block pt-2 text-sm text-cream-50/60 underline-offset-4 hover:underline">
+          Prova il tavolo da solo
+        </Link>
       </div>
     </main>
   );

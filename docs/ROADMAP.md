@@ -7,10 +7,10 @@ Ogni fase termina con una versione **deployabile** (stessa repo = app utenti).
 | 0 | Architettura, design system, docs, repo | Questa documentazione | ✅ |
 | 1 | Scaffold Next.js+TS+Tailwind+Framer, Supabase locale, CI, PWA shell, token design | App vuota che builda e si deploya | ✅ |
 | 2 | Schermate statiche navigabili: landing, creazione, lobby, tavolo, storico, chiusura, approvazione, risultato | UI mobile-first completa con dati finti | 🟡 landing + tavolo + storico + chiusura demo; mancano creazione stanza, lobby, approvazione, risultato |
-| 3 | Stanze e partecipanti reali: schema, RLS, `create/join_room`, lobby realtime, invito WhatsApp/QR | Più telefoni nella stessa lobby | ⬜ |
+| 3 | Stanze e partecipanti reali: schema, RLS, `create/join_room`, lobby realtime, invito WhatsApp/QR | Più telefoni nella stessa lobby | 🟡 schema SQL + RPC testati (pglite), repo locale funzionante tra schede, lobby/invito WhatsApp/avatar fatti; **manca il collegamento a un progetto Supabase reale** (adattatore scritto, non provato dal vivo) |
 | 4 | **Moneta**: componente 3D, drag/flick, hit-test, volo, suoni, haptics, `transfer_coins`, undo | Il cuore del prodotto (monete euro reali) | 🟡 prototipo client-side (drag, flick, volo, suoni, saldi); manca persistenza/RPC e undo |
-| 5 | Saldi e storico: vista `balances`, contatori animati, timeline, offline queue | Partita completa giocabile | ⬜ |
-| 6 | Chiusura e settlement: `close_room`, algoritmo, schermata proposte (+DP opzionale) | Pagamenti proposti corretti | ⬜ |
+| 5 | Saldi e storico: vista `balances`, contatori animati, timeline, offline queue | Partita completa giocabile | 🟡 saldi e storico dal ledger fatti; mancano coda offline e replay del volo per gli altri giocatori |
+| 6 | Chiusura e settlement: `close_room`, algoritmo, schermata proposte (+DP opzionale) | Pagamenti proposti corretti | 🟡 chiusura + proposte per tutti i giocatori; manca ricalcolo versionato e DP opzionale |
 | 7 | Approvazione e PayPal.Me: macchina a stati, link, «Ho pagato/Ricevuto», risultato finale | Ciclo completo end-to-end | ⬜ |
 | 8 | Hardening e rifinitura: E2E, a11y, perf budget, test iOS/Android, tuning feel del gesto | v1.0 | ⬜ |
 

@@ -2,33 +2,44 @@
 import { useMemo, useState } from "react";
 import { Avatar } from "@/components/avatar/Avatar";
 import { Sheet } from "@/components/ui/Sheet";
+import { fmtMoney } from "@/lib/money";
 import { settle } from "@/lib/settlement";
 import { jingle } from "@/lib/sound";
-import { fmtMoney } from "@/lib/money";
-import { DEMO_PLAYERS, ME } from "./players";
-
-const byId = Object.fromEntries(DEMO_PLAYERS.map((p) => [p.id, p]));
+import type { Player } from "./players";
 
 export function SettleSheet({
   open,
   onClose,
   balances,
+  players,
+  meId,
+  closing,
+  canClose,
+  onConfirmClose,
 }: {
   open: boolean;
   onClose: () => void;
   balances: Record<string, number>;
+  players: Player[];
+  meId: string;
+  /** Room already closed: payments are final, approvals enabled. */
+  closing: boolean;
+  /** Owner during play: show a confirm button that closes the room. */
+  canClose: boolean;
+  onConfirmClose: () => void | Promise<void>;
 }) {
+  const byId = useMemo(() => Object.fromEntries(players.map((p) => [p.id, p])), [players]);
   const payments = useMemo(() => (open ? settle(balances) : []), [open, balances]);
   const [approved, setApproved] = useState<Record<number, boolean>>({});
 
   return (
-    <Sheet open={open} onClose={onClose} title="Chiusura partita">
+    <Sheet open={open} onClose={onClose} title={closing ? "Chiusura partita" : "Chiudere la partita?"}>
       {payments.length === 0 ? (
         <p className="py-6 text-center text-cream-50/80">Tutti pari. Buon Natale! 🎄</p>
       ) : (
         <ul className="space-y-3">
           {payments.map((p, i) => {
-            const mine = p.from === ME;
+            const mine = p.from === meId;
             return (
               <li key={i} className="flex items-center gap-3 rounded-2xl border border-gold-500/30 bg-felt-900/60 p-3">
                 <Avatar cfg={byId[p.from].cfg} size={44} />
@@ -38,7 +49,7 @@ export function SettleSheet({
                   </p>
                   <p className="font-display text-lg font-bold text-gold-300">{fmtMoney(p.cents)}</p>
                 </div>
-                {mine ? (
+                {closing && mine ? (
                   <button
                     onClick={() => {
                       setApproved((a) => ({ ...a, [i]: true }));
@@ -50,16 +61,25 @@ export function SettleSheet({
                     {approved[i] ? "Approvato ✓" : "Approvo"}
                   </button>
                 ) : (
-                  <span className="text-xs text-cream-50/60">In attesa</span>
+                  <span className="text-xs text-cream-50/60">{closing ? "In attesa" : ""}</span>
                 )}
               </li>
             );
           })}
         </ul>
       )}
+      {canClose && !closing && (
+        <button
+          onClick={async () => {
+            await onConfirmClose();
+          }}
+          className="mt-5 min-h-12 w-full rounded-full bg-berry-600 py-3 font-extrabold shadow-lg ring-1 ring-gold-300/70 active:scale-[.98]"
+        >
+          Conferma e blocca i movimenti
+        </button>
+      )}
       <p className="mt-5 text-xs leading-relaxed text-cream-50/60">
-        Anteprima: nessun pagamento reale. Con la stanza reale, dopo l’approvazione si apre il link PayPal.Me precompilato
-        e nessun addebito parte in automatico.
+        Nessun addebito parte in automatico. Con PayPal.Me ogni pagamento si apre solo dopo la tua approvazione (in arrivo).
       </p>
     </Sheet>
   );

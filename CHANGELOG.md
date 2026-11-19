@@ -2,6 +2,12 @@
 Formato [Keep a Changelog](https://keepachangelog.com/it/1.1.0/), versioning [SemVer](https://semver.org/lang/it/).
 
 ## [Unreleased]
+### Added (Fase 3)
+- Stanze: crea con nome e avatar personalizzabile, entra con codice o link, lobby con invito WhatsApp/copia link, PayPal.Me facoltativo, avvio e chiusura partita, tavolo collegato alla stanza.
+- Schema Supabase `0001` (rooms, members, ledger append-only, RLS, RPC) con test su Postgres (pglite).
+- `RoomRepo` con adattatore locale (BroadcastChannel) e adattatore Supabase (non ancora provato su un progetto reale).
+- Next in export statico su GitHub Pages con `basePath`.
+
 ### Changed
 - Le monete sono ora **euro reali** (1, 2, 5, 10, 20, 50 cent, 1 €, 2 €): importi in centesimi interi ovunque, grafica per metallo e diametro reale, saldi formattati in euro.
 

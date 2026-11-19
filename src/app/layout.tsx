@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: "Tossy — Pass the coin",
   description:
     "Le monetine dei giochi natalizi, in digitale. Lancia la moneta, chiudi i conti.",
-  manifest: "/manifest.webmanifest",
-  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+  manifest: `${base}/manifest.webmanifest`,
+  icons: { icon: `${base}/icon.svg`, apple: `${base}/icon.svg` },
 };
 
 export const viewport: Viewport = {

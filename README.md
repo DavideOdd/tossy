@@ -2,7 +2,7 @@
 
 Le monetine dei giochi natalizi, ma digitali — con le **vere monete dell'euro** (da 1 centesimo a 2 euro). Si crea una stanza, gli amici entrano da un link WhatsApp, e le monete si **lanciano con un gesto** verso l'avatar di chi vince. A fine partita Tossy calcola chi deve pagare chi, con il minor numero di pagamenti, e genera i link PayPal — **mai nessun addebito automatico**.
 
-> Stato: **Fase 1 completata — prototipo giocabile locale su `/table`** · Repo privata · Vedi [ROADMAP](docs/ROADMAP.md)
+> Stato: **Fasi 1–3 (parziale)** — stanze, lobby e tavolo funzionano in modalità locale; collegamento Supabase da completare · [demo online](https://davideodd.github.io/tossy/) · Repo privata · Vedi [ROADMAP](docs/ROADMAP.md)
 
 ## In una frase
 Un tavolo di gioco condiviso in tempo reale dove il passaggio della moneta è l'esperienza (drag, lancio, suono, saldo animato) e il denaro vero si muove solo dopo approvazione esplicita.

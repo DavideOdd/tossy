@@ -2,13 +2,13 @@
   "name": "Tossy — Pass the coin",
   "short_name": "Tossy",
   "description": "Le monetine dei giochi natalizi, in digitale.",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0b3b2c",
   "theme_color": "#0b3b2c",
   "lang": "it",
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }
