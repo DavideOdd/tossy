@@ -15,3 +15,5 @@ supabase/.temp/
 *.log
 .pnpm-store/
 dist-demo/
+tsconfig.tsbuildinfo
+*.tsbuildinfo

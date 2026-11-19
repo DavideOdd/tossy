@@ -6,7 +6,7 @@ Formato [Keep a Changelog](https://keepachangelog.com/it/1.1.0/), versioning [Se
 - Le monete sono ora **euro reali** (1, 2, 5, 10, 20, 50 cent, 1 €, 2 €): importi in centesimi interi ovunque, grafica per metallo e diametro reale, saldi formattati in euro.
 
 ### Added
-- `scripts/build-demo.sh`: build statica standalone della demo, funziona da qualsiasi URL; workflow GitHub Pages manuale.
+- `scripts/build-demo.sh`: build statica standalone della demo, funziona da qualsiasi URL; deploy automatico su GitHub Pages.
 - Fase 1: scaffold Next.js 16 + TypeScript + Tailwind 4 + Framer Motion, token del design system, PWA manifest, CI GitHub Actions.
 - Moneta 3D (CSS) con drag, lancio ad arco, hit-test sugli avatar, suoni WebAudio sintetizzati e haptics.
 - Tavolo demo locale (`/table`) con saldi animati, storico e chiusura partita con pagamenti ottimizzati.

@@ -1,6 +1,8 @@
 name: Deploy demo to GitHub Pages
-# Manual: enable Pages (Settings → Pages → Source: GitHub Actions) first.
+# Publishes the playable demo on every push to main (Pages source: GitHub Actions).
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
