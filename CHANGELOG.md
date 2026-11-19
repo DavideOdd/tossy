@@ -2,6 +2,9 @@
 Formato [Keep a Changelog](https://keepachangelog.com/it/1.1.0/), versioning [SemVer](https://semver.org/lang/it/).
 
 ## [Unreleased]
+### Added (Fase 3b)
+- Stanze condivise tra telefoni diversi: progetto Supabase `tossy` (eu-central-1, piano Free) con login anonimo; URL e chiave pubblica nel workflow Pages. Migrazione `0002` per chiudere le RPC ad `anon`. Provato dal vivo con 2 client (creazione, ingresso, trasferimento idempotente, chiusura riservata all'organizzatore).
+
 ### Added (Fase 3)
 - Stanze: crea con nome e avatar personalizzabile, entra con codice o link, lobby con invito WhatsApp/copia link, PayPal.Me facoltativo, avvio e chiusura partita, tavolo collegato alla stanza.
 - Schema Supabase `0001` (rooms, members, ledger append-only, RLS, RPC) con test su Postgres (pglite).

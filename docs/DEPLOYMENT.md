@@ -40,3 +40,6 @@ Senza variabili l'app usa la **modalità locale** (stanze condivise solo tra sch
 
 ## GitHub Pages
 `pages.yml` esegue `next build` con `NEXT_EXPORT=1` e `NEXT_PUBLIC_BASE_PATH=/<repo>`. Il link d'invito è `…/room/?c=CODICE` (codice in query string perché l'export statico non ha rotte dinamiche).
+
+## Progetto Supabase attuale
+Progetto `tossy` (ref `puqxazpjkvtzahquoaif`, Francoforte, Free). Auth → Providers → **Anonymous Sign-Ins** deve restare attivo. Il piano Free va in pausa dopo 7 giorni senza attività: riattivalo dalla dashboard. Le variabili `NEXT_PUBLIC_SUPABASE_*` sono opzionali (default nel workflow).
